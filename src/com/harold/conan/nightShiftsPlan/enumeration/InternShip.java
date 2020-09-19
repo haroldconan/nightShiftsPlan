@@ -1,0 +1,6 @@
+package com.harold.conan.nightShiftsPlan.enumeration;
+
+public enum InternShip {
+	LOCOMOTEUR, GERIATRIE, PEDIATRIE, NEUROLOGIE, MEDECINE1, DIVERS, GYNECOLOGIE, THORAX, ABDOMINALE, MEDECINE2,
+	CANCEROLOGIE, PSYCHIATRIE
+}
