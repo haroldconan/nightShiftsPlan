@@ -53,7 +53,7 @@ public class ReadTableServiceImpl implements ReadTableService {
 							contentRowArrayList.add(cell.getBooleanCellValue() + "");
 							break;
 						case HSSFCell.CELL_TYPE_BLANK:
-
+							contentRowArrayList.add("");
 							break;
 						case HSSFCell.CELL_TYPE_ERROR:
 							contentRowArrayList.add(cell.getErrorCellValue() + "");
