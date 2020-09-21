@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
@@ -16,6 +15,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
@@ -39,6 +39,7 @@ public class MainWindows {
 	private ReadTableService readTableService;
 	private ArrayMap<String, ArrayList<ArrayList<String>>> tableOfTable = null;
 	private TableViewer tableViewer = null;
+	private Combo combo;
 
 	/**
 	 * Launch the application.
@@ -63,6 +64,7 @@ public class MainWindows {
 		shlNightShiftsPlanning.open();
 		shlNightShiftsPlanning.layout();
 		while (!shlNightShiftsPlanning.isDisposed()) {
+			tableViewer.getTable().setBounds(205, 10, shlNightShiftsPlanning.getBounds().width-230, shlNightShiftsPlanning.getBounds().height-110);
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
@@ -94,8 +96,11 @@ public class MainWindows {
 				String filePath = dialog.open();
 
 				if (filePath != null) {
+					tableOfTable = null;
 					tableOfTable = readTableService.readeTabler(filePath);
-					UpdateTable();
+					for (String key : tableOfTable.getKeys()) {
+						combo.add(key);
+					}
 				}
 
 			}
@@ -108,23 +113,36 @@ public class MainWindows {
 		optionAide.setText("Aide");
 		shlNightShiftsPlanning.setMenuBar(menu);
 
-		tableViewer = new TableViewer(shlNightShiftsPlanning, SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(shlNightShiftsPlanning);
+		combo = new Combo(shlNightShiftsPlanning, SWT.NONE);
+		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				UpdateTable(combo.getText());
+				System.out.println(combo.getText());
+			}
+		});
+		combo.setBounds(10, 10, 189, 23);
 
 	}
 
-	private void UpdateTable() {
+	private void UpdateTable(String tableName) {
+		restTable();
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		tableViewer.getTable().setLayoutData(gridData);
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
-		if (tableOfTable != null) {
+		if (tableOfTable != null && tableName!= null && tableName != "") {
 			TableLayout tlayout = new TableLayout();
 			TableViewerColumn column = null;
-			for (int i = 0; i < tableOfTable.get("Modèle URG D4").get(0).size(); i++) {
-				column = createTableViewerColumn(tableOfTable.get("Modèle URG D4").get(0).get(i), 150, i);
+			for (int i = 0; i < tableOfTable.get(tableName).get(0).size(); i++) {
+				column = createTableViewerColumn(tableOfTable.get(tableName).get(0).get(i), 150, i);
 				column.setLabelProvider(new ColumnLabelProvider() {
 					public String getText(Object element) {
-						return (String) element;
+						if (((ArrayList<String>) element).size() > 0)
+							return ((ArrayList<String>) element).get(0);
+						else
+							return "";
 					}
 				});
 			}
@@ -164,24 +182,58 @@ public class MainWindows {
 			public String getColumnText(Object element, int colmnIndex) {
 
 				String result = "";
-				switch (colmnIndex) {
-				case 0: {
-					if (((ArrayList<String>) element).size() > 0)
-						result = ((ArrayList<String>) element).get(1);
-					break;
+				try {
+					switch (colmnIndex) {
+					case 0: {
+						if (((ArrayList<String>) element).size() > 0)
+							result = ((ArrayList<String>) element).get(0);
+						break;
+					}
+					case 1: {
+						if (((ArrayList<String>) element).size() > 1)
+							result = ((ArrayList<String>) element).get(1);
+						break;
+					}
+					case 2: {
+						if (((ArrayList<String>) element).size() > 2)
+							result = ((ArrayList<String>) element).get(2);
+						break;
+					}
+					case 3:
+						if (((ArrayList<String>) element).size() > 3)
+							result = ((ArrayList<String>) element).get(3);
+						break;
+					case 4:
+						if (((ArrayList<String>) element).size() > 4)
+							result = ((ArrayList<String>) element).get(4);
+						break;
+					case 5:
+						if (((ArrayList<String>) element).size() > 5)
+							result = ((ArrayList<String>) element).get(5);
+						break;
+					case 6:
+						if (((ArrayList<String>) element).size() > 6)
+							result = ((ArrayList<String>) element).get(6);
+						break;
+					case 7:
+						if (((ArrayList<String>) element).size() > 7)
+							result = ((ArrayList<String>) element).get(7);
+						break;
+					case 8:
+						if (((ArrayList<String>) element).size() > 8)
+							result = ((ArrayList<String>) element).get(8);
+						break;
+					case 9:
+						if (((ArrayList<String>) element).size() > 9)
+							result = ((ArrayList<String>) element).get(9);
+						break;
+					default:
+						if (((ArrayList<String>) element).size() > 0)
+							result = ((ArrayList<String>) element).get(0);
+					}
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
 				}
-				case 1: {
-					if (((ArrayList<String>) element).size() > 0)
-						result = ((ArrayList<String>) element).get(1);
-					break;
-				}
-				case 2: {
-					if (((ArrayList<String>) element).size() > 0)
-						result = ((ArrayList<String>) element).get(1);
-					break;
-				}
-				}
-				System.out.println(result);
 				return result;
 			}
 
@@ -191,8 +243,14 @@ public class MainWindows {
 			}
 		});
 
-		tableViewer.setInput(tableOfTable.get("Modèle URG D4"));
+		tableViewer.setInput(tableOfTable.get(tableName));
 		tableViewer.refresh();
+	}
+	
+	private void restTable() {
+		tableViewer.getTable().clearAll();
+		tableViewer.getTable().removeAll();
+		tableViewer.refresh(); 
 	}
 
 	private TableViewerColumn createTableViewerColumn(String header, int width, int idx) {
